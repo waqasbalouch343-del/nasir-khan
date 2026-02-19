@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nasir Khan Fast Food</title>
+<style>
+/* ===== Body & Header ===== */
+body{font-family:Arial, sans-serif;margin:0;background:#fff8e1;}
+header{background:#ff6f61;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 6px rgba(0,0,0,0.1);}
+header h1{margin:0;font-size:24px;font-weight:bold;}
+nav a{color:white;margin:0 10px;text-decoration:none;font-weight:bold;cursor:pointer;font-size:16px;}
+nav a:hover{text-decoration:underline;text-shadow:1px 1px 2px rgba(0,0,0,0.2);}
+
+/* ===== Banner ===== */
+.banner{background:url('https://images.unsplash.com/photo-1578985545062-69928b1d9587');background-size:cover;background-position:center;height:220px;display:flex;align-items:center;justify-content:center;color:white;font-size:32px;font-weight:bold;text-shadow:2px 2px 5px rgba(0,0,0,0.5);}
+
+/* ===== Sections ===== */
+section{padding:25px;}
+.products{display:flex;flex-wrap:wrap;justify-content:center;}
+.product{background:#fff3e0;margin:15px;padding:15px;width:220px;text-align:center;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);transition:transform 0.2s;}
+.product:hover{transform:translateY(-5px);background:#ffe0b2;}
+.product img{width:100%;height:160px;border-radius:10px;object-fit:cover;}
+button{background:#ff6f61;color:white;border:none;padding:10px;margin-top:10px;cursor:pointer;border-radius:5px;font-weight:bold;}
+button:hover{background:#e5534b;}
+.quantity-input{width:60px;text-align:center;margin-top:5px;padding:5px;border-radius:5px;border:1px solid #ccc;}
+
+/* ===== Popup Form ===== */
+.popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;z-index:1000;}
+.form-box{background:white;padding:25px;width:400px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.3);}
+.form-box h3{text-align:center;margin-top:0;margin-bottom:15px;color:#ff6f61;}
+.form-box input, .form-box textarea{width:100%;padding:12px;margin:8px 0;border-radius:5px;border:1px solid #ccc;font-size:14px;}
+.form-box input:focus, .form-box textarea:focus{border-color:#ff6f61;outline:none;}
+.close{background:red;color:white;border:none;padding:6px 10px;float:right;cursor:pointer;border-radius:5px;}
+
+/* ===== Cart Popup ===== */
+#cartPopup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:2000;}
+#cartContent{background:white;padding:25px;width:450px;border-radius:12px;max-height:80%;overflow-y:auto;}
+#cartContent h3{text-align:center;color:#ff6f61;}
+.cart-item{display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding:10px;background:#fff3e0;border-radius:8px;}
+.cart-item input{width:50px;text-align:center;padding:5px;border-radius:5px;border:1px solid #ccc;}
+#cartContent button{width:100%;padding:12px;margin-top:15px;font-weight:bold;background:#ff6f61;color:white;border:none;border-radius:8px;cursor:pointer;}
+#cartContent button:hover{background:#e5534b;}
+
+/* ===== Footer ===== */
+footer{background:#ff6f61;color:white;text-align:center;padding:15px;margin-top:20px;font-size:14px;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Nasir Khan Fast Food</h1>
+<nav>
+<a onclick="showSection('home')">Home</a>
+<a onclick="showSection('products')">Products</a>
+<a onclick="showSection('categories')">Categories</a>
+<a onclick="showSection('contact')">Contact</a>
+</nav>
+</header>
+
+<div id="home" class="banner">Nasir Khan Fast Food</div>
+
+<section id="products" style="display:none;">
+<h2 style="text-align:center;margin-bottom:20px;">Our Products</h2>
+<div class="products" id="productsContainer"></div>
+<button onclick="openCart()">View Cart & Send WhatsApp Order</button>
+</section>
+
+<section id="categories" style="display:none;">
+<h2 style="text-align:center;">Categories</h2>
+<div class="categories-container">
+<div class="category">Chocolates All Types</div>
+<div class="category">Toffees</div>
+<div class="category">Cold Drinks All Types</div>
+<div class="category">Snacks</div>
+<div class="category">Bakery & Desserts</div>
+<div class="category">Every Eating Food</div>
+</div>
+</section>
+
+<section id="contact" style="display:none;">
+<h2 style="text-align:center;">Contact Us</h2>
+<p style="text-align:center;">WhatsApp: +92 321 3933556<br>Email: info@nasirkhanfastfood.pk</p>
+</section>
+
+<!-- User Details Popup -->
+<div class="popup" id="popup">
+<div class="form-box">
+<button class="close" onclick="closeForm()">X</button>
+<h3>Enter Your Details</h3>
+<input type="text" id="name" placeholder="Full Name" required>
+<input type="text" id="phone" placeholder="Phone Number" required>
+<textarea id="address" placeholder="Full Address"></textarea>
+<input type="text" id="city" placeholder="City">
+<input type="email" id="email" placeholder="Email (Optional)">
+<button onclick="submitDetails()">Save Details</button>
+</div>
+</div>
+
+<!-- Cart Popup -->
+<div class="popup" id="cartPopup">
+<div id="cartContent">
+<h3>Your Cart</h3>
+<div id="cartItems"></div>
+<button onclick="sendCartWhatsApp()">Send Order via WhatsApp</button>
+</div>
+</div>
+
+<footer>© 2026 Nasir Khan Fast Food | All Rights Reserved</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Navigation
+  window.showSection = function(sectionId){
+    ['home','products','categories','contact'].forEach(s=>document.getElementById(s).style.display='none');
+    document.getElementById(sectionId).style.display = sectionId=='home'?'flex':'block';
+  }
+
+  // Products
+  let products=[
+    {name:"Milk Chocolate",price:100,img:"https://images.unsplash.com/photo-1612313458132-9c20c0ad48ef"},
+    {name:"Dark Chocolate",price:120,img:"https://images.unsplash.com/photo-1599785209707-1a2e6cd62d4a"},
+    {name:"Toffees Pack",price:80,img:"https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2"},
+    {name:"Cold Drink Can",price:60,img:"https://images.unsplash.com/photo-1564767609342-620cb19b2357"},
+    {name:"Chips Pack",price:50,img:"https://images.unsplash.com/photo-1592415487925-6f2033e7f239"},
+    {name:"Chocolate Cake Slice",price:150,img:"https://images.unsplash.com/photo-1601996343282-0f90aa3c75c0"},
+    {name:"Cookies Pack",price:70,img:"https://images.unsplash.com/photo-1585238341971-0f5f3bce3e71"}
+  ];
+
+  let container=document.getElementById('productsContainer');
+  window.cart={};
+  products.forEach((p,i)=>{
+    let div=document.createElement('div');
+    div.className='product';
+    div.innerHTML=`<img src="${p.img}"><h3>${p.name}</h3><p>Rs. ${p.price}</p>
+      Quantity: <input type="number" min="0" value="0" class="quantity-input" id="qty${i}">
+    `;
+    container.appendChild(div);
+  });
+
+  // User Form
+  window.openForm = function(){ document.getElementById("popup").style.display="flex"; }
+  window.closeForm = function(){ document.getElementById("popup").style.display="none"; }
+  window.submitDetails = function(){
+    window.userName=document.getElementById("name").value;
+    window.userPhone=document.getElementById("phone").value;
+    window.userAddress=document.getElementById("address").value;
+    window.userCity=document.getElementById("city").value;
+    window.userEmail=document.getElementById("email").value;
+    if(!window.userName||!window.userPhone||!window.userAddress){ alert("Please fill all required details"); return; }
+    alert("Details saved!");
+    closeForm();
+  }
+
+  // Cart Popup
+  window.openCart = function(){
+    if(!window.userName||!window.userPhone||!window.userAddress){ alert("Please fill your details first."); openForm(); return; }
+    let cartDiv=document.getElementById("cartItems");
+    cartDiv.innerHTML="";
+    let total=0;
+    products.forEach((p,i)=>{
+      let qty=parseInt(document.getElementById("qty"+i).value);
+      if(qty>0){
+        let item=document.createElement("div");
+        item.className="cart-item";
+        item.innerHTML=`<span>${p.name} - Rs.${p.price}</span>
+          <input type="number" min="0" value="${qty}" onchange="updateQty(${i},this.value)">
+        `;
+        cartDiv.appendChild(item);
+        total+=p.price*qty;
+        window.cart[i]=qty;
+      } else { delete window.cart[i]; }
+    });
+    if(Object.keys(window.cart).length===0){ alert("Cart is empty!"); return; }
+    document.getElementById("cartPopup").style.display="flex";
+  }
+
+  window.updateQty = function(i, val){ window.cart[i]=parseInt(val); }
+
+  window.sendCartWhatsApp = function(){
+    let message="Order Details:%0A"; let total=0;
+    Object.keys(window.cart).forEach(i=>{
+      let qty=window.cart[i]; let p=products[i];
+      message+=`${p.name} x${qty} - Rs.${p.price*qty}%0A`; total+=p.price*qty;
+    });
+    message+=`Total: Rs.${total}%0AName: ${window.userName}%0APhone: ${window.userPhone}%0AAddress: ${window.userAddress}%0ACity: ${window.userCity || ''}%0AEmail: ${window.userEmail || ''}`;
+    let whatsappNumber="923213933556";
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`,'_blank');
+    document.getElementById("cartPopup").style.display="none";
+  }
+
+});
+</script>
+
+</body>
+</html>
